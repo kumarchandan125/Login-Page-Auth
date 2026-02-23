@@ -18,7 +18,18 @@ const allowedOrigins=[
 app.use(express.json()); // Middleware to parse JSON bodies
 app.use(cookieParser()); // Middleware to parse cookies
 
-app.use(cors({ credentials: true, origin: allowedOrigins }));
+// app.use(cors({ credentials: true, origin: allowedOrigins }));
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
+
 
 //Api EndPoint
 app.get("/", (req, res) => {
