@@ -48,7 +48,11 @@ export const register = async (req, res) => {
       text: `Hello ${name},\n\nYour registration was successful! Welcome to our platform.\n\nBest regards,\nThe Team`,
     };
     // Send the email
-    await transporter.sendMail(mailOptions);
+    try {
+      await transporter.sendMail(mailOptions);
+    } catch (emailError) {
+      console.log("Error sending welcome email (skipping):", emailError.message);
+    }
     return res.json({
       message: "Registration Successfully",
       success: true,
@@ -152,7 +156,7 @@ export const sendVerifyOtp = async (req, res) => {
       to: user.email,
       subject: "Verify Your Account",
       // text: `Hello ${user.name},\n\nYour verification OTP is: ${otp}\n\nThis OTP is valid for 10 minutes.`,
-      html:EMAIL_VERIFY_TEMPLATE.replace("{{email}}",user.email).replace("{{otp}}",otp).replace("{{name}}",user.name).replace("{{otp_expiry_time}}",user.verifyOtpExpiredAt)
+      html: EMAIL_VERIFY_TEMPLATE.replace("{{email}}", user.email).replace("{{otp}}", otp).replace("{{name}}", user.name).replace("{{otp_expiry_time}}", user.verifyOtpExpiredAt)
     };
 
     await transporter.sendMail(mailOptions);
@@ -254,7 +258,7 @@ export const sendPasswordRestOtp = async (req, res) => {
       to: user.email,
       subject: "Password Reset Otp",
       // text: `Hello ${user.name},\n\nYour password reset OTP is: ${otp}\n\nThis OTP is valid for 10 minutes.`,
-      html:PASSWORD_RESET_TEMPLATE.replace("{{email}}",user.email).replace("{{otp}}",otp).replace("{{name}}",user.name).replace("{{otp_expiry_time}}",user.resetOtpExpiredAt)
+      html: PASSWORD_RESET_TEMPLATE.replace("{{email}}", user.email).replace("{{otp}}", otp).replace("{{name}}", user.name).replace("{{otp_expiry_time}}", user.resetOtpExpiredAt)
 
     }
     await transporter.sendMail(mailOptions);
