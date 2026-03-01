@@ -11,14 +11,15 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 connectDB();
-const allowedOrigins=[
-  process.env.FRONTEND_URL
-]
+const allowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+  : [];
 
 app.use(express.json()); // Middleware to parse JSON bodies
 app.use(cookieParser()); // Middleware to parse cookies
 
 // app.use(cors({ credentials: true, origin: allowedOrigins }));
+
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
